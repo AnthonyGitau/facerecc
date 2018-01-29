@@ -35,7 +35,7 @@ class Student(Base):
         self.email = email
         self.registered_on = datetime.utcnow()
 
-    def __str__(self):
+    def __repr__(self):
         return "Student - %s" % (self.first_name)
 
 
@@ -45,14 +45,14 @@ class Attendance(Base):
     id = Column('attendance_id',Integer , primary_key=True)
     unit_id = Column(Integer, ForeignKey(Unit.id))
     student_id = Column(Integer, ForeignKey(Student.id))
-    registered_on = Column('registered_on' , DateTime)
+    attended_on = Column('registered_on' , DateTime)
 
     def __init__(self, unit_id, student_id):
         self.unit_id = unit_id
         self.student_id = student_id
         self.attended_on = datetime.utcnow()
 
-    def __str__(self):
+    def __repr__(self):
         return "Student %s - Attended %s on %s" % (
             self.student_id, self.unit_id, self.attended_on)
 

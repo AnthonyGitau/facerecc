@@ -7,7 +7,7 @@ from flask_login import login_user , logout_user , current_user , login_required
 from sqlalchemy import exists
 
 from database import db_session
-from models import User, Student, Unit
+from models import User, Student, Unit, Attendance
 
 app= Flask(__name__)
 app.secret_key = 'sakjdvayusdq873dvhavsmdhna(&09hajdhsa9d7asdmdhascdasjd'
@@ -149,7 +149,16 @@ def attendance_track():
 
 @app.route('/attendance_track/<unit_id>')
 def attendance_track_unit(unit_id):
+    import face_recognition
+    unit = Unit.query.get(unit_id)
+
+    face_recognition.attendanceRecord(unit.id)
     return jsonify({'status': 200})
+
+@app.route('/charts')
+def charts():
+    units = Unit.query.all()
+    return render_template('charts.html', units=units)
 
 if __name__ == '__main__':
     app.run(debug=True)

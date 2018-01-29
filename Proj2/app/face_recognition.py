@@ -19,20 +19,6 @@ font=cv2.FONT_HERSHEY_COMPLEX
 def getProfile(id):
     return db_session.query(Student).get(id)
 
-# def getProfile(id):
-#     conn=sqlite3.connect('facedb.db')
-#     cmd="SELECT * FROM Students WHERE Id="+str(id)+";"
-#     cursor=conn.execute(cmd)
-#     profile=None
-#     for row in cursor:
-#         profile=row
-#     print(cursor, ' cursor')
-#     conn.close()
-
-#     print("Detected this fool {}".format(id))
-#     return profile
-# print('Starting System ......')
-
 while(True):
     date_string = time.strftime('%Y-%m-%d-%H:%M')
     ret, img = cam.read()
@@ -47,9 +33,8 @@ while(True):
             cv2.putText(img, profile.first_name,(x,y+h+20),font,1, (0,255,0))
             print(profile.first_name)
         else:
-            cv2.putText(img, 'Unknown Student',(x-10,y-10),font,1,(0,255,0))
-
-        image_path = "output/User."+str(id)+"\t"+ date_string+".jpg"
+            cv2.putText(img, 'New Student',(x-10,y-10),font,1,(0,255,0))
+        image_path = "output/User."+str(id)+"\t"+ date_string +".jpg"
         print(image_path)
         cv2.imwrite(image_path,img[y:y+h,x:x+w])
     cv2.imshow("face",img)

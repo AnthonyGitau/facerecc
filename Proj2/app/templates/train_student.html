@@ -1,0 +1,104 @@
+{% extends "dashboard.html" %}
+
+
+{% block element %}
+<body class="bg-dark">
+  <div class="container">
+
+    {% with messages = get_flashed_messages() %}
+    <div class="card card-register mx-auto mt-5">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card text-white bg-primary o-hidden h-100">
+            <div class="card-body">
+              <div class="mr-5"></div>
+            </div>
+            <a class="card-footer text-white clearfix small z-1" href="#">
+              <span class="float-left">{{ message }}</span>
+            </a>
+          </div>
+        {% endfor %}
+        {% endif %}
+     </div>
+     {% endwith %}
+
+     
+      <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active">Tables</li>
+        </ol>
+        <!-- Example DataTables Card-->
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fa fa-table"></i> Data Table Example</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Face Acquire</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for student in students %}
+                  <tr>
+                    <td> {{ student.first_name }}</td>
+                    <td> {{ student.last_name }} </td>
+                    <td> {{ student.email }} </td>
+                    <td> 
+                      <button class="btn btn-warning btn-block train-student"" data-id="{{ student.id }} ">Acquire</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        </div>
+      </div>
+    <!-- /.container-fluid-->
+    <!-- /.content-wrapper-->
+    <footer class="sticky-footer">
+      <div class="container">
+        <div class="text-center">
+          <small>Copyright © Your Website 2017</small>
+        </div>
+      </div>
+    </footer>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+  </div>
+{% endblock %}
+
+
+{% block scripts %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $('.train-student').click(function(event){
+            var student_id = $(this).data().id;
+            console.log(student_id);
+
+            event.preventDefault();
+            $.ajax({
+              url: `/train/${student_id}`,
+              success: function(data) {
+                console.log('Successfully started training')
+              },
+              error: function(error) {
+                console.log('Error training the student.')
+              }
+            });
+      });
+    })
+  </script>
+{% endblock %}

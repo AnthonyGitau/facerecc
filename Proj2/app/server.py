@@ -140,5 +140,16 @@ def add_unit():
 
     flash('Unit added and updated to the system.')
     return redirect(url_for('add_unit'))
+
+@app.route('/attendance_track')
+def attendance_track():
+    units = Unit.query.all()
+    return render_template('attendance_track.html', units=units)
+
+
+@app.route('/attendance_track/<unit_id>')
+def attendance_track_unit(unit_id):
+    return jsonify({'status': 200})
+
 if __name__ == '__main__':
     app.run(debug=True)

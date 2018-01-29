@@ -1,0 +1,57 @@
+{% extends "dashboard.html" %}
+
+
+{% block element %}
+<body class="bg-dark">
+  <div class="container">
+
+    {% with messages = get_flashed_messages() %}
+    <div class="card card-register mx-auto mt-5">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card text-white bg-primary o-hidden h-100">
+            <a class="card-footer text-white clearfix small z-1" href="#">
+              <span class="float-left">{{ message }}</span>
+            </a>
+          </div>
+        {% endfor %}
+        {% endif %}
+     </div>
+     {% endwith %}
+
+
+    {% for unit in units %}
+        <div class="card card-login mx-auto mt-5">
+          <div class="card-header text-center"> {{ unit.name }}</div>
+          <div class="card-body">
+            <div class="text-center mt-4 mb-5">
+              <h4>{{ unit.lecturer }} </h4>
+              <p>{{ unit.code }}</p>
+            <button class="btn btn-warning unit-track" data-id="{{ unit.id }}">Track</button>
+            </div>
+    {% endfor %}
+  </div>
+</div>
+</body>
+{% endblock %}
+
+
+{% block scripts %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $('.unit-track').click(function(event){
+          var unit_id = $(this).data().id;
+          event.preventDefault();
+          $.ajax({
+            url: `/attendance_track/${unit_id}`,
+            success: function(data) {
+              console.log('Successfully started tracking attendance')
+            },
+            error: function(error) {
+              console.log('Error tracking the attendance.')
+            }
+          });
+      });
+    })
+  </script>
+{% endblock %}

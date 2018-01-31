@@ -1,15 +1,19 @@
+import datetime
 import subprocess
 import threading
+
 from flask import jsonify
 from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
 from flask_login import login_user , logout_user , current_user , login_required, LoginManager
+import bcrypt
 
-from sqlalchemy import exists
+from sqlalchemy import exists, Date, cast, extract
 
 from database import db_session
 from models import User, Student, Unit, Attendance
 
 app= Flask(__name__)
+
 app.secret_key = 'sakjdvayusdq873dvhavsmdhna(&09hajdhsa9d7asdmdhascdasjd'
 
 login_manager = LoginManager()
@@ -39,7 +43,11 @@ def index():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    user = User(request.form['name'], request.form['password'],request.form['email'])
+
+    pw_hash = bcrypt.hashpw(request.form['password'].encode(), bcrypt.gensalt())
+
+    user = User(request.form['first_name'], 
+        request.form['last_name'], pw_hash,request.form['email'])
     db_session.add(user)
     db_session.commit()
     flash('User successfully registered')
@@ -53,8 +61,8 @@ def login():
 
     email = request.form['email']
     password = request.form['password']
-    registered_user = User.query.filter_by(email=email,password=password).first()
-    if registered_user is None:
+    registered_user = User.query.filter_by(email=email).first()
+    if registered_user is None or not bcrypt.checkpw(password.encode(), registered_user.password.encode()):
         flash('Username or Password is invalid' , 'error')
         return redirect(url_for('login'))
     login_user(registered_user)
@@ -78,7 +86,7 @@ def add_student():
 
     student_exists = db_session.query(exists().where(Student.email==emailAddress)).scalar()
     if student_exists:
-        student=Student.query.filter_by(Id=id).first()
+        student=Student.query.filter_by(email=emailAddress).first()
         student.first_name = first_name
         student.last_name = last_name
         db_session.commit()
@@ -91,12 +99,57 @@ def add_student():
     return redirect(url_for('add_student'))
 
 
+@app.route('/all_students', methods=['GET', 'POST'])
+def all_students():
+    students = db_session.query(Student).all()
+    return render_template('all_students.html', students=students)
+
+
+@app.route('/all_students/delete/<id>', methods=['GET', 'POST'])
+def delete_student(id):
+    if request.method == 'GET':
+        student = db_session.query(Student).get(id)
+        return render_template('delete_student.html', student=student)
+
+    student = Student.query.get(id)
+    db_session.delete(student)
+    db_session.commit()
+
+    flash('Student deleted from the system.')
+    return redirect(url_for('all_students'))
+
+@app.route('/all_students/update/<id>', methods=['GET', 'POST'])
+def update_student(id):
+    if request.method == 'GET':
+        student = db_session.query(Student).get(id)
+        return render_template('edit_student.html', student=student)
+
+    firstName = request.form['firstName']
+    lastName = request.form['lastName']
+    emailAddress = request.form['emailAddress']
+
+    student_exists = db_session.query(exists().where(Student.email==emailAddress)).scalar()
+    if student_exists:
+        student=Student.query.filter_by(id=id).first()
+        student.first_name = firstName
+        student.last_name = lastName
+        student.email = emailAddress
+        db_session.commit()
+
+    flash('Student Updated In system.')
+    return redirect(url_for('all_students'))
+
+
+
+
+
 @app.route('/train_student', methods=['GET', 'POST'])
 def train_student():
     if request.method == 'GET':
         students = db_session.query(Student).all()
         print(students)
         return render_template('train_student.html', students=students)
+
 
 @app.route('/train/<student_id>', methods=['GET', 'POST'])
 def train(student_id):
@@ -159,6 +212,40 @@ def attendance_track_unit(unit_id):
 def charts():
     units = Unit.query.all()
     return render_template('charts.html', units=units)
+
+@app.route('/get_unit_dates/<unit_id>')
+def get_unit_dates(unit_id):
+    dates = db_session.query(Attendance).filter(Attendance.unit_id == unit_id).all()
+    dates = [d.attended_on.strftime('%d-%m-%Y') for d in dates]
+    dates = list(set(dates))
+    return jsonify({'dates':dates})
+
+@app.route('/get_attendance_dates/<unit_id>/<date>')
+def get_attendance_dates(unit_id, date):
+    date = date.split('-')
+    print(date)
+    print(int(date[0]), int(date[1]), int(date[2]))
+    date = datetime.datetime(int(date[2]), int(date[1]), int(date[0]))
+
+    print(date)
+    attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id) \
+                            .filter(extract('year', Attendance.attended_on) == date.year) \
+                            .filter(extract('month', Attendance.attended_on) == date.month) \
+                            .filter(extract('day', Attendance.attended_on) == date.day).all()
+
+    months = [a.attended_on.strftime('%B') for a in attendances]
+    res = {}
+    for m in months:
+        if not res.get(m, None):
+            res[m] = 1
+        else:
+            res[m] += 1
+
+    return jsonify({
+        'labels': list(res.keys()),
+        'data': list(res.values()),
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)

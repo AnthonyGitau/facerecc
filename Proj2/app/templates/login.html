@@ -19,6 +19,22 @@
 <body class="bg-dark">
   {% block body %}
   <div class="container">
+  {% with messages = get_flashed_messages() %}
+    <div class="card card-register mx-auto mt-5">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card text-white bg-primary o-hidden h-100">
+            <div class="card-body">
+              <div class="mr-5"></div>
+            </div>
+            <a class="card-footer text-white clearfix small z-1" href="#">
+              <span class="float-left">{{ message }}</span>
+            </a>
+          </div>
+        {% endfor %}
+        {% endif %}
+     </div>
+     {% endwith %}
     <div class="card card-login mx-auto mt-5">
       <div class="card-header">Login</div>
       <div class="card-body">
@@ -31,19 +47,18 @@
             <label for="exampleInputPassword1">Password</label>
             <input class="form-control" name="password" type="password" placeholder="Password">
           </div>
-          <div class="form-group">
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Remember Password</label>
-            </div>
-          </div>
+          
           <button type="submit" class="btn btn-primary btn-block">Login</button type="submit">
+          <br>
+          Don't have an account? <a href="/register">Register</a>
         </form>
       </div>
     </div>
   </div>
   {% endblock %}
   <!-- Bootstrap core JavaScript-->
+
+
 
   <script src="/static/sb-admin.min.js"></script>
   <script src="/static/sb-admin-charts.min.js"></script>

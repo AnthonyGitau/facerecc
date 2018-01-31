@@ -32,6 +32,7 @@ class Student(Base):
  
     def __init__(self , first_name ,last_name , email):
         self.first_name = first_name
+        self.last_name = last_name
         self.email = email
         self.registered_on = datetime.utcnow()
 
@@ -67,8 +68,9 @@ class User(Base):
     email = Column('email',String(50),unique=True , index=True)
     registered_on = Column('registered_on' , DateTime)
  
-    def __init__(self , first_name ,password , email):
+    def __init__(self , first_name ,last_name, password , email):
         self.first_name = first_name
+        self.last_name = last_name
         self.password = password
         self.email = email
         self.registered_on = datetime.utcnow()

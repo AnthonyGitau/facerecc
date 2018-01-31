@@ -2,7 +2,7 @@ import datetime
 import subprocess
 import threading
 
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
 from flask_login import login_user , logout_user , current_user , login_required, LoginManager
 import bcrypt
@@ -138,6 +138,10 @@ def update_student(id):
 
     flash('Student Updated In system.')
     return redirect(url_for('all_students'))
+
+@app.route('/image/<path:path>')
+def send_image(path):
+    return send_from_directory('dataset', path)
 
 
 

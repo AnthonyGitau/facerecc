@@ -14,15 +14,15 @@ faceDetect=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # faceDetect=cv2.CascadeClassifier('./haarcascades/haarcascade_frontalface_alt2.xml')
 #faceDetect=cv2.CascadeClassifier('./haarcascades/haarcascade_eye.xml')
 
-cam=cv2.VideoCapture(0)
-rec=cv2.face.createLBPHFaceRecognizer()
-rec.load('trainer/trainingdata.yml')
-font=cv2.FONT_HERSHEY_COMPLEX
 
 def getProfile(id):
     return db_session.query(Student).get(id)
 
 def attendanceRecord(unit_id):
+    cam=cv2.VideoCapture(0)
+    rec=cv2.face.createLBPHFaceRecognizer()
+    rec.load('trainer/trainingdata.yml')
+    font=cv2.FONT_HERSHEY_COMPLEX
     start_time = time.time()
     while(True):
         date_string = time.strftime('%Y-%m-%d-%H:%M')
@@ -49,7 +49,7 @@ def attendanceRecord(unit_id):
                 
             else:
                 cv2.putText(img, 'New Student',(x-10,y-10),font,1,(0,255,0))
-            image_path = "output/User."+str(id)+"\t"+ date_string +".jpg"
+            image_path = "output/User."+str(id)+"\t"+ date_string +".png"
             print(image_path)
             cv2.imwrite(image_path,img[y:y+h,x:x+w])
         cv2.imshow("face",img)

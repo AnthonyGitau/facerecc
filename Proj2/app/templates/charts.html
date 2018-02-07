@@ -37,9 +37,12 @@
           </select>
         </div>
     </div>
-    <div class="chart">
-      <canvas id="chart" width="150" height="150"></canvas>
+    <div class="row chart">
+      <div class="col-md-6">
+        <canvas id="chart" height="200"></canvas>
+      </div>
     </div>
+    <h2>Student Attendance Per Day</h2>
     <table class="table table-bordered" width="100%" cellspacing="0">
                 <thead>
                   <tr>
@@ -61,10 +64,10 @@
 </body>
 
 <style type="text/css">
-  .chart {
+  /*.chart {
     height: 500px;
-    width: 450px;
-  }
+    width: 350px;
+  }*/
 </style>
 {% endblock %}
 
@@ -80,7 +83,8 @@
               datasets: [{
                   label: 'Class Attendance By Date',
                   data: [],
-                  borderWidth: 1
+                  borderWidth: 1,
+                  backgroundColor: 'rgba(253, 203, 110,1.0)',
               }]
           },
           options:{

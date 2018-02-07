@@ -5,12 +5,10 @@ import threading
 from flask import jsonify, send_from_directory
 from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
 from flask_login import login_user , logout_user , current_user , login_required, LoginManager
-import bcrypt
-
 from sqlalchemy import exists, Date, cast, extract
 
 from database import db_session
-from models import User, Student, Unit, Attendance
+from models import User, Student, Unit, Attendance, UnitRegistration
 
 app= Flask(__name__)
 
@@ -158,9 +156,10 @@ def train_student():
 @app.route('/train/<student_id>', methods=['GET', 'POST'])
 def train(student_id):
     import face_acquire
-
+    print('Face Acquire Starting for Student {}'.format(student_id))
     thread = threading.Thread(target=face_acquire.capture, args=(student_id,))
     thread.start()
+    print('Face Acquire Ending for Student {}'.format(student_id))
     return jsonify({'status': 200})
 
 
@@ -237,6 +236,75 @@ def update_unit(id):
 
     flash('Unit Updated In system.')
     return redirect(url_for('manage_units'))
+
+
+
+@app.route('/register_units/<id>', methods=['GET', 'POST'])
+def register_units(id):
+    student = Student.query.get(id)
+
+    if request.method == 'GET':
+        units = Unit.query.all()
+        return render_template('register_units.html', units=units, student=student)
+
+    courses = request.form.getlist('courses')
+    for course in courses:
+        ur = UnitRegistration(int(course), student.id)
+        db_session.add(ur)
+        db_session.commit()
+
+    flash('Courses Registered In system.')
+    return redirect(url_for('all_students'))
+
+@app.route('/unit_data', methods=['GET', 'POST'])
+def unit_data():
+    units = Unit.query.all()
+    return render_template('unit_data.html', units=units)
+
+@app.route('/get_unit_students/<unit_id>')
+def get_unit_students(unit_id):
+
+    attendance = db_session.query(Attendance).filter(Attendance.unit_id == unit_id).all()
+    dates = [d.attended_on.strftime('%d-%m-%Y') for d in attendance]
+    dates = list(set(dates))
+    attendance_data = {}
+    for d in dates:
+        date = d.split('-')
+        date = datetime.datetime(int(date[2]), int(date[1]), int(date[0]))
+        attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id) \
+                                .filter(extract('year', Attendance.attended_on) == date.year) \
+                                .filter(extract('month', Attendance.attended_on) == date.month) \
+                                .filter(extract('day', Attendance.attended_on) == date.day).all()
+
+        label = date.strftime('%d-%m-%Y')
+        if not attendance_data.get(label, None):
+            attendance_data[label] = len(attendances)
+        else:
+            attendance_data[label] = attendance_data[label] + len(attendances)
+
+    chart_labels, chart_data = [], []
+    for key in sorted(attendance_data.keys()):
+        chart_labels.append(key)
+        chart_data.append(attendance_data[key])
+
+    unit_registration = db_session.query(UnitRegistration).filter(UnitRegistration.unit_id==unit_id).all()
+    student_number = len(unit_registration)
+    students = []
+    for u in unit_registration:
+        student = Student.query.get(u.student_id)
+        if student:
+            students.append(
+                {
+                 'student_id': student.id, 'first_name':student.first_name, 
+                 'last_name': student.last_name, 'email': student.email
+                }
+            )
+    response = {
+        'student_number': student_number,
+        'students':students,
+        'attendance_data': {'labels': chart_labels, 'data': chart_data},
+    }
+    return jsonify(response)
 
 
 @app.route('/attendance_track')

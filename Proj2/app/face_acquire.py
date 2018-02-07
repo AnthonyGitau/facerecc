@@ -1,8 +1,7 @@
 import cv2
 import numpy as numpy
 
-face_detect=cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
-cam=cv2.VideoCapture(0)
+
 
 from database import db_session
 from models import Student
@@ -22,6 +21,10 @@ def insertOrUpdate(Id, first_name, last_name, email):
 	return True
 
 def capture(Id):
+	print('FACE ACQUIRE STARTING')
+
+	face_detect=cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
+	cam=cv2.VideoCapture(0)
 	sampleNum=0
 	while(True):
 		ret,img=cam.read()
@@ -30,20 +33,17 @@ def capture(Id):
 			faces=face_detect.detectMultiScale(gray,1.3,5)
 			for(x,y,w,h) in faces:
 				sampleNum=sampleNum+1
-				cv2.imwrite("/home/fynch/Proj2/app/dataset/User."+str(Id)+"."+str(sampleNum)+".jpg",img[y:y+h,x:x+w])
+				cv2.imwrite("/home/fynch/Proj2/app/dataset/User."+str(Id)+"."+str(sampleNum)+".png",img[y:y+h,x:x+w])
 				cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
 			print("no of faces found {}".format(len(faces)))
 			cv2.imshow("Face",img)
 			if cv2.waitKey(50) & 0xFF == ord('q'):
-				end()
+				cam.release()
+				cv2.destroyAllWindows()
 				break
 			elif sampleNum>20:
-				end()
+				cam.release()
+				cv2.destroyAllWindows()
 				break
 	print('Done facial capturing')
 	return
-
-def end():
-	cam.release()
-	cv2.destroyAllWindows()
-	return None

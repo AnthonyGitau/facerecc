@@ -56,6 +56,9 @@
                     <td> {{ student.last_name }} </td>
                     <td> {{ student.email }} </td>
                     <td> 
+                        <a href="{{ url_for('register_units', id=student.id) }}" class="btn btn-primary btn-block" data-id="{{ student.id }} ">Register Units</a>
+                     </td>
+                    <td> 
                       <a href="{{ url_for('update_student', id=student.id) }}" class="btn btn-warning btn-block" data-id="{{ student.id }} ">Update</a>
                     </td>
                     <td> 

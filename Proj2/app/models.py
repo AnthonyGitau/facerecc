@@ -57,6 +57,20 @@ class Attendance(Base):
         return "Student %s - Attended %s on %s" % (
             self.student_id, self.unit_id, self.attended_on)
 
+class UnitRegistration(Base):
+    __tablename__ = "unit_registration"
+
+    id = Column('unit_registration',Integer , primary_key=True)
+    unit_id = Column(Integer, ForeignKey(Unit.id))
+    student_id = Column(Integer, ForeignKey(Student.id))
+
+    def __init__(self, unit_id, student_id):
+        self.unit_id = unit_id
+        self.student_id = student_id
+
+    def __repr__(self):
+        return "Student %s taking course %s" % (self.student_id, self.unit_id)
+
 
 class User(Base):
     __tablename__ = "user"

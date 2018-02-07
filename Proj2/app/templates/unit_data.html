@@ -37,7 +37,7 @@
           <canvas id="chart" height="200"></canvas>
         </div>
     </div>
-    <h2>All Students Taking This Course</h2>
+    <h3>All Students Taking This Course <span id="number" class="btn btn-primary"></span></h3>
     <table class="table table-bordered" width="100%" cellspacing="0">
       <thead>
         <tr>
@@ -95,7 +95,6 @@
       });
 
       function addData(chart, label, data) {
-          console.log('Updating addData() ', label, data)
           chart.data.labels.push(label);
           chart.data.datasets.forEach((dataset) => {
               dataset.data.push(data);
@@ -104,7 +103,6 @@
       }
 
       function removeData(chart) {
-          console.log('Updating removeData() ');
           chart.data.labels.pop();
           chart.data.datasets.forEach((dataset) => {
               dataset.data.pop();
@@ -116,10 +114,11 @@
             $.ajax({
               url: `/get_unit_students/${unit_id}`,
               success: function(data) {
+                console.log(data);
                 var students = data.students;
+                $('#number').text(data.student_number);
                 var attendance_data = data.attendance_data;
 
-                removeData(myChart);
                 console.log('Attendance Data ', attendance_data);
                 $('#tableBody').empty();
                 students.forEach(function(student){
@@ -132,6 +131,7 @@
                     </tr>
                     `)
                 })
+                removeData(myChart);
                 for (var i = attendance_data.labels.length - 1; i >= 0; i--) {
                   addData(myChart, attendance_data.labels[i], attendance_data.data[i]);
                 }

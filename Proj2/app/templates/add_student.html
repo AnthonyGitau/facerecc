@@ -31,17 +31,17 @@
             <div class="form-row">
               <div class="col-md-6">
                 <label for="exampleInputName">First name</label>
-                <input class="form-control" name="firstName" type="text" placeholder="Enter first name">
+                <input class="form-control" name="firstName" type="text" placeholder="Enter first name" required="true">
               </div>
               <div class="col-md-6">
                 <label for="exampleInputLastName">Last name</label>
-                <input class="form-control" name="lastName" type="text" placeholder="Enter last name">
+                <input class="form-control" name="lastName" type="text" placeholder="Enter last name" required="true">
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
-            <input class="form-control" name="emailAddress" type="emailAddress" aria-describedby="emailHelp" placeholder="Enter email">
+            <input class="form-control" name="emailAddress" type="email" aria-describedby="emailHelp" placeholder="Enter email" required="true">
           </div>
 
           <button type="submit" class="btn btn-primary btn-block" href="{{ url_for('register') }}">Register</button>

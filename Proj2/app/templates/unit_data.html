@@ -32,8 +32,10 @@
             </select>
           </div>
     </div>
-    <div class="chart">
-      <canvas id="chart" width="100" height="100"></canvas>
+     <div class="row chart">
+        <div class="col-md-6">
+          <canvas id="chart" height="200"></canvas>
+        </div>
     </div>
     <h2>All Students Taking This Course</h2>
     <table class="table table-bordered" width="100%" cellspacing="0">
@@ -55,9 +57,7 @@
   </div>
 </body>
 
-<style type="text/css">
- 
-</style>
+
 {% endblock %}
 
 
@@ -73,11 +73,6 @@
                   label: 'Class Attendance By Date',
                   data: [],
                   borderWidth: 1,
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
               }]
           },
           options:{
@@ -99,15 +94,8 @@
 
       });
 
-      function removeData(chart) {
-          chart.data.labels.pop();
-          chart.data.datasets.forEach((dataset) => {
-              dataset.data.pop();
-          });
-          chart.update();
-      }
-
       function addData(chart, label, data) {
+          console.log('Updating addData() ', label, data)
           chart.data.labels.push(label);
           chart.data.datasets.forEach((dataset) => {
               dataset.data.push(data);
@@ -115,42 +103,56 @@
           chart.update();
       }
 
+      function removeData(chart) {
+          console.log('Updating removeData() ');
+          chart.data.labels.pop();
+          chart.data.datasets.forEach((dataset) => {
+              dataset.data.pop();
+          });
+          chart.update();
+      }
+
       function updateData(unit_id) {
-              $.ajax({
-                url: `/get_unit_students/${unit_id}`,
-                success: function(data) {
-                  console.log(data);
-                  var students = data.students;
-                  var attendance_data = data.attendance_data;
-                  console.log('Attendance Data ', attendance_data);
-                  $('#tableBody').empty();
-                  students.forEach(function(student){
-                    $('#tableBody').append(`
-                        <tr>
-                        <td>${student.student_id}</td>
-                        <td>${student.first_name}</td>
-                        <td>${student.last_name}</td>
-                        <td>${student.email}</td>
-                      </tr>
-                      `)
-                  })
-                  removeData(myChart);
-                  addData(myChart, attendance_data.labels, attendance_data.data);
-                },
-                error:function(error) {
-                  console.log('Error: ', error);
+            $.ajax({
+              url: `/get_unit_students/${unit_id}`,
+              success: function(data) {
+                var students = data.students;
+                var attendance_data = data.attendance_data;
+
+                removeData(myChart);
+                console.log('Attendance Data ', attendance_data);
+                $('#tableBody').empty();
+                students.forEach(function(student){
+                  $('#tableBody').append(`
+                      <tr>
+                      <td>${student.student_id}</td>
+                      <td>${student.first_name}</td>
+                      <td>${student.last_name}</td>
+                      <td>${student.email}</td>
+                    </tr>
+                    `)
+                })
+                for (var i = attendance_data.labels.length - 1; i >= 0; i--) {
+                  addData(myChart, attendance_data.labels[i], attendance_data.data[i]);
                 }
-              })
+              },
+              error:function(error) {
+                console.log('Error: ', error);
+              }
+            })
         }
+
 
         $('#course').on('change', function(e){
             e.preventDefault();
+            console.log('Changed');
             course = $('#course').val();
             updateData(course);
         });
 
         var course = $('#course').val();
         updateData(course);
+
     });
   </script>
 {% endblock %}

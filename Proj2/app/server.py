@@ -198,6 +198,47 @@ def add_unit():
     flash('Unit added and updated to the system.')
     return redirect(url_for('add_unit'))
 
+@app.route('/manage_units', methods=['GET', 'POST'])
+def manage_units():
+    units = Unit.query.all()
+    return render_template('manage_units.html', units=units)
+
+
+@app.route('/manage_units/delete/<id>', methods=['GET', 'POST'])
+def delete_unit(id):
+    if request.method == 'GET':
+        unit = db_session.query(Unit).get(id)
+        return render_template('delete_unit.html', unit=unit)
+    unit = Unit.query.get(id)
+    db_session.delete(unit)
+    db_session.commit()
+
+    flash('Unit delete from the system.')
+    return redirect(url_for('manage_units'))
+
+
+@app.route('/manage_units/update/<id>', methods=['GET', 'POST'])
+def update_unit(id):
+    if request.method == 'GET':
+        unit = db_session.query(Unit).get(id)
+        return render_template('edit_unit.html', unit=unit)
+
+    code = request.form['code']
+    name = request.form['name']
+    lecturer = request.form['lecturer']
+
+    student_exists = db_session.query(exists().where(Unit.id==id)).scalar()
+    if student_exists:
+        unit=Unit.query.filter_by(id=id).first()
+        unit.code = code
+        unit.name = name
+        unit.lecturer = lecturer
+        db_session.commit()
+
+    flash('Unit Updated In system.')
+    return redirect(url_for('manage_units'))
+
+
 @app.route('/attendance_track')
 def attendance_track():
     units = Unit.query.all()
@@ -219,8 +260,9 @@ def charts():
 
 @app.route('/get_unit_dates/<unit_id>')
 def get_unit_dates(unit_id):
-    dates = db_session.query(Attendance).filter(Attendance.unit_id == unit_id).all()
-    dates = [d.attended_on.strftime('%d-%m-%Y') for d in dates]
+    attendance = db_session.query(Attendance).filter(Attendance.unit_id == unit_id).all()
+
+    dates = [d.attended_on.strftime('%d-%m-%Y') for d in attendance]
     dates = list(set(dates))
     return jsonify({'dates':dates})
 
@@ -231,11 +273,24 @@ def get_attendance_dates(unit_id, date):
     print(int(date[0]), int(date[1]), int(date[2]))
     date = datetime.datetime(int(date[2]), int(date[1]), int(date[0]))
 
-    print(date)
+    
     attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id) \
                             .filter(extract('year', Attendance.attended_on) == date.year) \
                             .filter(extract('month', Attendance.attended_on) == date.month) \
                             .filter(extract('day', Attendance.attended_on) == date.day).all()
+
+    print('ATTENDANCES ', attendances)
+    students_attendance = []
+    for a in attendances:
+        student = Student.query.get(a.student_id)
+        if student:
+            students_attendance.append(
+                {
+                 'student_id': student.id, 'first_name':student.first_name, 
+                 'last_name': student.last_name, 'attended_on':a.attended_on 
+                }
+            )
+
 
     months = [a.attended_on.strftime('%B') for a in attendances]
     res = {}
@@ -248,6 +303,7 @@ def get_attendance_dates(unit_id, date):
     return jsonify({
         'labels': list(res.keys()),
         'data': list(res.values()),
+        'students_attendance': students_attendance,
     })
 
 

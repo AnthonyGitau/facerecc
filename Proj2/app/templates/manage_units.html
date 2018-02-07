@@ -1,0 +1,86 @@
+{% extends "dashboard.html" %}
+
+
+{% block element %}
+<body class="bg-dark">
+  <div class="container">
+
+    {% with messages = get_flashed_messages() %}
+    <div class="card card-register mx-auto mt-5">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="card text-white bg-primary o-hidden h-100">
+            <div class="card-body">
+              <div class="mr-5"></div>
+            </div>
+            <a class="card-footer text-white clearfix small z-1" href="#">
+              <span class="float-left">{{ message }}</span>
+            </a>
+          </div>
+        {% endfor %}
+        {% endif %}
+     </div>
+     {% endwith %}
+
+     
+      <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active">All Students</li>
+        </ol>
+        <!-- Example DataTables Card-->
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fa fa-table"></i> Students Management</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered"  width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Unit Code</th>
+                    <th>Unit Name</th>
+                    <th>Lecturer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for unit in units %}
+                  <tr>
+                    <td> {{ unit.code }}</td>
+                    <td> {{ unit.name }} </td>
+                    <td> {{ unit.lecturer }} </td>
+                    <td>
+                    	<a href="{{ url_for('update_unit', id=unit.id) }}" class="btn btn-warning">
+                    		UPDATE
+                    	</a>
+                    </td>
+                    <td>
+                    	<a href="{{ url_for('delete_unit', id=unit.id) }}" class="btn btn-danger">
+                    		DELETE
+                    	</a>
+                    </td>
+                   </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        </div>
+
+        <form method="POST" action=">
+            
+        </form>
+      </div> 
+   
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

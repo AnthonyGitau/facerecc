@@ -36,8 +36,11 @@ def capture(Id):
 			cv2.imshow("Face",img)
 			if cv2.waitKey(50) & 0xFF == ord('q'):
 				end()
+				break
 			elif sampleNum>20:
 				end()
+				break
+	print('Done facial capturing')
 	return
 
 def end():

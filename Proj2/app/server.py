@@ -159,7 +159,7 @@ def train_student():
 def train(student_id):
     import face_acquire
 
-    thread = threading.Thread(target=face_acquire.capture(student_id))
+    thread = threading.Thread(target=face_acquire.capture, args=(student_id,))
     thread.start()
     return jsonify({'status': 200})
 

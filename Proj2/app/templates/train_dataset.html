@@ -6,8 +6,8 @@
   <div class="container">
 
     {% with messages = get_flashed_messages() %}
-    <div class="card card-register mx-auto mt-5">
       {% if messages %}
+      <div class="card card-register mx-auto mt-5">
         {% for message in messages %}
           <div class="card text-white bg-primary o-hidden h-100">
             <div class="card-body">
@@ -18,8 +18,8 @@
             </a>
           </div>
         {% endfor %}
+       </div>
         {% endif %}
-     </div>
      {% endwith %}
 
      
@@ -53,6 +53,7 @@
       <i class="fa fa-angle-up"></i>
     </a>
   </div>
+  </body>
 {% endblock %}
 
 

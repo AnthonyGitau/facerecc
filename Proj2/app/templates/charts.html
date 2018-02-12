@@ -6,8 +6,8 @@
   <div class="container">
 
     {% with messages = get_flashed_messages() %}
-    <div class="card card-register mx-auto mt-5">
       {% if messages %}
+      <div class="card card-register mx-auto mt-5">
         {% for message in messages %}
           <div class="card text-white bg-primary o-hidden h-100">
             <div class="card-body">
@@ -18,9 +18,18 @@
             </a>
           </div>
         {% endfor %}
-        {% endif %}
      </div>
+        {% endif %}
      {% endwith %}
+       <div class="breadcrumb_div">
+         
+       <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Charts</li>
+        </ol>
+       </div>
 
      <div class="row">
         <div class="col-md-6">
@@ -64,10 +73,9 @@
 </body>
 
 <style type="text/css">
-  /*.chart {
-    height: 500px;
-    width: 350px;
-  }*/
+  .breadcrumb_div {
+    margin-top: 50px;
+  }
 </style>
 {% endblock %}
 

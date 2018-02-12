@@ -6,6 +6,8 @@ import bcrypt
 from flask import jsonify, send_from_directory
 from flask import Flask,session, request, flash, url_for, redirect, render_template, abort ,g
 from flask_login import login_user , logout_user , current_user , login_required, LoginManager
+
+import sqlalchemy as sa
 from sqlalchemy import exists, Date, cast, extract
 
 from database import db_session
@@ -353,7 +355,18 @@ def get_unit_registered_students(unit_id):
     })
     return jsonify(response)
 
+@app.route('/compute_unit_student_attendance/<unit_id>/<student_id>')
+def get_unit_student_attendance(unit_id, student_id):
+    classes_count = db_session.query(Attendance) \
+        .filter(Attendance.unit_id == unit_id) \
+        .group_by(sa.func.date(Attendance.attended_on)).scalar()
+    print('Classes count ', count)
 
+    student_attendance = db_session.query(Attendance) \
+        .filter(Attendance.unit_id == unit_id, Attendance.student_id == student_id) \
+        .group_by(sa.func.date(Attendance.attended_on))
+
+    print('Student attendance ', student_attendance)
 
 @app.route('/get_unit_dates/<unit_id>')
 def get_unit_dates(unit_id):

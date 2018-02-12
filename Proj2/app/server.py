@@ -166,6 +166,7 @@ def train(student_id):
 
 @app.route('/train_dataset')
 def train_dataset():
+    print('Training the dataset at {}'.format(datetime.datetime.now()))
     return render_template('train_dataset.html')
 
 @app.route('/train_dataset_process')
@@ -326,6 +327,10 @@ def attendance_track_unit(unit_id):
 def charts():
     units = Unit.query.all()
     return render_template('charts.html', units=units)
+
+@app.route('/attendance_computation')
+def attendance_computation():
+    return render_template('dashboard.html')
 
 @app.route('/get_unit_dates/<unit_id>')
 def get_unit_dates(unit_id):

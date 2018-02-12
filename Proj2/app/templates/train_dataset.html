@@ -4,7 +4,6 @@
 {% block element %}
 <body class="bg-dark">
   <div class="container">
-
     {% with messages = get_flashed_messages() %}
       {% if messages %}
       <div class="card card-register mx-auto mt-5">
@@ -25,12 +24,14 @@
      
       <div class="container-fluid">
         <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="#">Dashboard</a>
-          </li>
-          <li class="breadcrumb-item active">Train Dataset</li>
-        </ol>
+        <div class="breadcrumb_div">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Train DataSet</li>
+          </ol>
+        </div>
         <!-- Example DataTables Card-->
         <div class="card mb-3 jumbotron">
             <button id="train-dataset" class="btn btn-primary active">
@@ -48,19 +49,29 @@
         </div>
       </div>
     </footer>
+    
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fa fa-angle-up"></i>
     </a>
   </div>
-  </body>
-{% endblock %}
+</body>
 
+
+
+<style type="text/css">
+  .breadcrumb_div {
+    margin-top: 50px;
+  }
+
+</style>
+{% endblock %}
 
 {% block scripts %}
   <script type="text/javascript">
     $(document).ready(function(){
         $('#train-dataset').click(function(event){
+          console.log('Clicked meee');
             event.preventDefault();
             $.ajax({
               url: `/train_dataset_process`,

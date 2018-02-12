@@ -166,11 +166,11 @@ def train(student_id):
 
 @app.route('/train_dataset')
 def train_dataset():
-    print('Training the dataset at {}'.format(datetime.datetime.now()))
     return render_template('train_dataset.html')
 
 @app.route('/train_dataset_process')
 def train_dataset_process():
+    print('Training the dataset at {}'.format(datetime.datetime.now()))
     subprocess.call(['python', 'face_training.py'])
     return jsonify({'status': 200, 'trained': True})
 
@@ -330,7 +330,30 @@ def charts():
 
 @app.route('/attendance_computation')
 def attendance_computation():
-    return render_template('dashboard.html')
+    students = Student.query.all()
+    units = Unit.query.all()
+    return render_template('attendance_computation.html', students=students, units=units)
+
+
+@app.route('/get_unit_registered_students/<unit_id>')
+def get_unit_registered_students(unit_id):
+    student_ids = db_session.query(UnitRegistration).with_entities(UnitRegistration.student_id) \
+            .filter(UnitRegistration.unit_id == unit_id).all()
+    student_ids = [s[0] for s in student_ids]
+    students = db_session.query(Student).filter(Student.id.in_(student_ids)).all()
+
+    response = []
+    for student in students:
+        response.append({
+            'id': student.id,
+            'email': student.email,
+            'first_name': student.first_name,
+            'last_name': student.last_name,
+
+    })
+    return jsonify(response)
+
+
 
 @app.route('/get_unit_dates/<unit_id>')
 def get_unit_dates(unit_id):

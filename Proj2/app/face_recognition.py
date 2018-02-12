@@ -48,6 +48,7 @@ def attendanceRecord(unit_id):
                         print('Student [%s] attendance recorded' % profile.id)
                 
             else:
+            	
                 cv2.putText(img, 'New Student',(x-10,y-10),font,1,(0,255,0))
             image_path = "output/User."+str(id)+"\t"+ date_string +".png"
             print(image_path)

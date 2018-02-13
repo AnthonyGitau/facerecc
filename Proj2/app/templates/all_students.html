@@ -54,12 +54,12 @@
                 <tbody>
                 {% for student in students %}
                   <tr>
-                    <td> <img src="/image/User.{{student.id}}.1.png" style="width:90px;height:90px;"></td>
+                    <td> <img src="/image/User.{{student.id}}.1.png"></td>
                     <td> {{ student.first_name }}</td>
                     <td> {{ student.last_name }} </td>
                     <td> {{ student.email }} </td>
                     <td> 
-                        <a href="{{ url_for('register_units', id=student.id) }}" class="btn btn-p9imary btn-block" data-id="{{ student.id }} ">Register Units</a>
+                        <a href="{{ url_for('register_units', id=student.id) }}" class="btn btn-primary btn-block" data-id="{{ student.id }} ">Register Units</a>
                      </td>
                     <td> 
                       <a href="{{ url_for('update_student', id=student.id) }}" class="btn btn-warning btn-block" data-id="{{ student.id }} ">Update</a>

@@ -390,18 +390,21 @@ def get_unit_dates(unit_id):
     dates = list(set(dates))
     return jsonify({'dates':dates})
 
-@app.route('/get_attendance_dates/<unit_id>/<date>')
-def get_attendance_dates(unit_id, date):
+
+@app.route('/get_attendance_dates/<unit_id>/<date>/<end_date>')
+@app.route('/get_attendance_dates/<unit_id>/<date>', defaults={'end_date': None})
+def get_attendance_dates(unit_id, date, end_date):
     date = date.split('-')
-    print(date)
-    print(int(date[0]), int(date[1]), int(date[2]))
     date = datetime.datetime(int(date[2]), int(date[1]), int(date[0]))
 
-    
-    attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id) \
-                            .filter(extract('year', Attendance.attended_on) == date.year) \
-                            .filter(extract('month', Attendance.attended_on) == date.month) \
-                            .filter(extract('day', Attendance.attended_on) == date.day).all()
+    if not end_date:
+        attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id) \
+                                .filter(extract('year', Attendance.attended_on) == date.year) \
+                                .filter(extract('month', Attendance.attended_on) == date.month) \
+                                .filter(extract('day', Attendance.attended_on) == date.day).all()
+    else:
+        attendances = db_session.query(Attendance).filter(Attendance.unit_id == unit_id, 
+                                                    Attendance.attended_on.between(date, end_date)).all()
 
     print('ATTENDANCES ', attendances)
     students_attendance = []

@@ -28,6 +28,7 @@ class Student(Base):
     first_name = Column('first_name', String(50), unique=False , index=False)
     last_name = Column('last_name' , String(50))
     email = Column('email',String(50),unique=True , index=True)
+    password = Column('password' , String(200))
     registered_on = Column('registered_on' , DateTime)
  
     def __init__(self , first_name ,last_name , email):

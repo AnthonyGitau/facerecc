@@ -43,10 +43,7 @@
         </div>
         <div class="col-md-6">
           <label>Student</label>
-            <select class="form-control" id="course">
-              {% for student in students %}
-	                <option value="{{ student.id }}"> {{ student.first_name }} - {{ student.last_name }} </option>
-              {% endfor %}
+            <select class="form-control" id="students">
             </select>
         </div>
     </div>
@@ -59,4 +56,57 @@
   }
 </style>
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  function computeStudent() {
+    var unit_id = $('#course').val();
+    var student_id = $('#students').val();
+    $.ajax({
+      'url': `/compute_unit_student_attendance/${unit_id}/${student_id}`,
+      success: function(data) {
+        console.log(data);
+      }
+    })
+  }
+
+  function updateStudents() {
+      var unit_id = $('#course').val();
+      $.ajax({
+        url: `/get_unit_registered_students/${unit_id}`,
+        success: function(data) {
+          console.log(data);
+          if (!data) {
+
+          } else {
+            $('#students').empty();
+            $.each(data, function(index, student){
+              $('#students').append(`
+                <option value="${student.id}">
+                  ${student.id} - ${student.first_name} ${student.last_name} 
+                </option>
+                `)
+            });
+          }
+        }
+      })
+  };
+
+  $(document).ready(function(){
+    var unit_id = $('#course').val();
+    updateStudents(unit_id);
+
+    $('#course').on('change', function(event){
+        event.preventDefault();
+        updateStudents();
+    });
+
+    $('#students').on('change', function(index, student){
+      computeStudent();
+    })
+  })
+</script>
+{% endblock %}
+
+
 

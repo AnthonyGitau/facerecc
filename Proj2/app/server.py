@@ -359,14 +359,28 @@ def get_unit_registered_students(unit_id):
 def get_unit_student_attendance(unit_id, student_id):
     classes_count = db_session.query(Attendance) \
         .filter(Attendance.unit_id == unit_id) \
-        .group_by(sa.func.date(Attendance.attended_on)).scalar()
-    print('Classes count ', count)
+        .group_by(sa.func.date(Attendance.attended_on)) \
+        .count()
+    # classes_count = len(classes_count)
 
     student_attendance = db_session.query(Attendance) \
         .filter(Attendance.unit_id == unit_id, Attendance.student_id == student_id) \
         .group_by(sa.func.date(Attendance.attended_on))
 
-    print('Student attendance ', student_attendance)
+    attendance = []
+    for a in student_attendance.all():
+        student = Student.query.get(a.student_id)
+        if student:
+            attendance.append(
+                {
+                 'student_id': student.id, 'first_name':student.first_name, 
+                 'last_name': student.last_name, 'attended_on':a.attended_on 
+                }
+            )
+    return jsonify({
+        'count': classes_count,
+        'attendance': attendance,
+    })
 
 @app.route('/get_unit_dates/<unit_id>')
 def get_unit_dates(unit_id):

@@ -204,6 +204,7 @@
               $.ajax({
                 url: `/get_attendance_dates/${unit_id}/${start_date}/${end_date}`,
                 success: function(data) {
+                  console.log('Get Range ', data)
                   var students_attendance = data.students_attendance;
                   $('#tableBody').empty();
                   students_attendance.forEach(function(student){
@@ -227,11 +228,7 @@
             $('#dates').append("<option value=''>No Dates Recorded</option>");
             $('#tableBody').empty();
             removeData(myChart);
-            
           }
-
-
-
         }
 
         function updateDates(course) {
@@ -253,8 +250,6 @@
               }
             });
         }
-
-
         
         $('#dates').on('change', function(e){
             e.preventDefault();

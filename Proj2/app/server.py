@@ -36,8 +36,12 @@ def before_request():
 
 
 @app.route('/')
-@login_required
 def index():
+    return render_template('landing.html')
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
     return render_template('dashboard.html')
 
 @app.route('/register' , methods=['GET','POST'])
@@ -68,7 +72,7 @@ def login():
         return redirect(url_for('login'))
     login_user(registered_user)
     flash('Logged in successfully')
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect(request.args.get('next') or url_for('dashboard'))
 
 @app.route('/logout')
 def logout():

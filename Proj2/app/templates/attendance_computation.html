@@ -48,17 +48,83 @@
         </div>
     </div>
   </div>
+  <br><br>
+
+  <div class="row" id="statistics">
+        <div class="col-xl-3 col-sm-6 mb-3">
+          <div class="card text-white bg-primary o-hidden h-100">
+            <div class="card-body">
+              <div class="">
+                <i class="fa fa-fw fa-calendar big-icon"></i>
+              </div>
+              <h2 class="mr-2" id="numberOfClasses"></h2>
+              <h4>Total Classes</h4>
+            </div>
+            </a>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+          <div class="card text-white bg-success o-hidden h-100">
+            <div class="card-body">
+              <div class="">
+                <i class="fa fa-fw fa-user-plus big-icon"></i>
+              </div>
+              <h2 class="mr-5" id="attendancePercentage"></h2>
+              <h4>Percentage Attended</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-3">
+          <div class="card o-hidden h-100">
+            <div class="card-body">
+              <div class="">
+                <i class="fa fa-fw fa-support big-icon"></i>
+              </div>
+              <h5 class="mr-5" id="actionTake"></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+        <h2>Attendance Time Sheet</h2>
+         <table id="statisticsTable" class="table table-bordered" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+          </tbody>
+        </table>
+    </div>
 </body>
 
 <style type="text/css">
   .breadcrumb_div {
     margin-top: 50px;
   }
+
+  .big-icon {
+    font-size: 32px;
+}
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
+  function clearStatistics() {
+    $('#numberOfClasses').text('');
+    $('#attendancePercentage').text('');
+    $('#actionTake').text('');
+    $('#statistics').hide();
+    $('#statisticsTable').hide();
+  }
+
   function computeStudent() {
     var unit_id = $('#course').val();
     var student_id = $('#students').val();
@@ -66,6 +132,37 @@
       'url': `/compute_unit_student_attendance/${unit_id}/${student_id}`,
       success: function(data) {
         console.log(data);
+        if (!$.isEmptyObject(data)) {
+          clearStatistics();
+          var count = data.count;
+          $('#numberOfClasses').text(count);
+
+          var percentage = (data.attendance.length / count) * 100;
+          percentage = Number.isNaN(percentage) ? 0: percentage;
+          $('#attendancePercentage').text(`${percentage} %`);
+
+          if (percentage > 70) {
+              $('#actionTake').text(`Student Attendance Is Satisfactory`)
+          } else if (percentage > 50) {
+              $('#actionTake').text(`Student Attendance Is Average but below Satisfactory`)
+          } else {
+              $('#actionTake').text(`Student Attendance Is Abysmall and Student Action Should Be Taken`)
+          };
+
+          $('#statistics').show();
+
+          $.each(data.attendance, function(index, attendance){
+              $('#tableBody').append(`
+                          <tr>
+                          <td>${attendance.student_id}</td>
+                          <td>${attendance.first_name}</td>
+                          <td>${attendance.last_name}</td>
+                          <td>${attendance.attended_on}</td>
+                        </tr>`);
+          });
+
+          $('#statisticsTable').show();
+        }
       }
     })
   }
@@ -87,6 +184,7 @@
                 </option>
                 `)
             });
+            computeStudent();
           }
         }
       })

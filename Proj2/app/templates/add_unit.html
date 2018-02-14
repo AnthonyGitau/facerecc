@@ -21,15 +21,16 @@
      </div>
         {% endif %}
      {% endwith %}
-      <!-- Breadcrumbs-->
-        <div class="breadcrumb_div">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a href="#">Dashboard</a>
-            </li>
-            <li class="breadcrumb-item active">Add a new Unit</li>
-          </ol>
-     
+  <!-- Breadcrumbs-->
+    <div class="breadcrumb_div">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Add a new Unit</li>
+      </ol>
+    </div>
+
     <div class="card card-register mx-auto mt-5">
       <div class="card-header">Create A New Unit</div>
       <div class="card-body">
@@ -50,14 +51,13 @@
             <label for="exampleInputEmail1">Lecturer</label>
             <input class="form-control" name="lecturerName" placeholder="Lecturer Name">
           </div>
-
           <button type="submit" class="btn btn-primary btn-block" href="{{ url_for('register') }}">Register</button>
         </form>
-
       </div>
     </div>
+
   </div>
-  </body>
+</body>
 
 
 
@@ -65,7 +65,7 @@
   .breadcrumb_div {
     margin-top: 50px;
   }
-
+</style>
 {% endblock %}
 
 

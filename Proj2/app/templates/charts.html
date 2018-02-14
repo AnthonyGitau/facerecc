@@ -115,13 +115,13 @@
       var myChart = new Chart(ctx, {
           type: 'line',
           data: {
-              // labels: [],
-              // datasets: [{
-              //     label: 'Class Attendance By Date',
-              //     data: [],
-              //     borderWidth: 1,
-              //     backgroundColor: 'rgba(253, 203, 110,1.0)',
-              // }]
+              labels: [],
+              datasets: [{
+                  label: 'Class Attendance By Date',
+                  data: [],
+                  borderWidth: 1,
+                  backgroundColor: ['rgba(253, 203, 110,1.0)', '#e74c3c', '#2980b9', '#8e44ad', '#16a085']
+              }]
           },
           options:{
            scales: {
@@ -193,7 +193,7 @@
                               label: 'Class Attendance By Date',
                               data: data.data,
                               borderWidth: 1,
-                              backgroundColor: 'rgba(253, 203, 110,1.0)',
+                              backgroundColor: ['rgba(253, 203, 110,1.0)', '#e74c3c', '#2980b9', '#8e44ad', '#16a085']
                           }]
                       },
                       options:{

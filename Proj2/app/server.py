@@ -72,7 +72,7 @@ def login():
         return redirect(url_for('login'))
     login_user(registered_user)
     flash('Logged in successfully')
-    return redirect(request.args.get('next') or url_for('dashboard'))
+    return redirect(request.args.get('next') or url_for('all_students'))
 
 @app.route('/logout')
 def logout():

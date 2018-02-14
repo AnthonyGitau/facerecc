@@ -4,7 +4,7 @@ import numpy as np
 import sqlite3
 import time
 
-LESSON_TIME = 2400
+LESSON_TIME = 30
 LESSON_STUDENTS = {}
 
 from database import db_session

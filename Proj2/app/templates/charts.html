@@ -98,7 +98,7 @@
 
     }
 
-    $(document).ready(function(){
+    // $(document).ready(function(){
       $('#dateRange').daterangepicker({
         locale: {
             format: 'DD/MM/YYYY',
@@ -113,15 +113,15 @@
 
       var ctx = document.getElementById("chart").getContext('2d');
       var myChart = new Chart(ctx, {
-          type: 'bar',
+          type: 'line',
           data: {
-              labels: [],
-              datasets: [{
-                  label: 'Class Attendance By Date',
-                  data: [],
-                  borderWidth: 1,
-                  backgroundColor: 'rgba(253, 203, 110,1.0)',
-              }]
+              // labels: [],
+              // datasets: [{
+              //     label: 'Class Attendance By Date',
+              //     data: [],
+              //     borderWidth: 1,
+              //     backgroundColor: 'rgba(253, 203, 110,1.0)',
+              // }]
           },
           options:{
            scales: {
@@ -179,7 +179,38 @@
                       `)
                   })
                   removeData(myChart);
-                  addData(myChart, data.labels, data.data);
+
+                  // myChart.data.datasets[0].data = data.data;
+                  // myChart.data.labels = data.labels;
+
+                  console.log('Labels ', data.labels, ' data ', data.data);
+                  myChart.destroy();
+                  myChart = new Chart(ctx, {
+                      type: 'bar',
+                      data: {
+                          labels: data.labels,
+                          datasets: [{
+                              label: 'Class Attendance By Date',
+                              data: data.data,
+                              borderWidth: 1,
+                              backgroundColor: 'rgba(253, 203, 110,1.0)',
+                          }]
+                      },
+                      options:{
+                       scales: {
+                           yAxes: [{
+                               ticks: {
+                                   beginAtZero: true,
+                                   userCallback: function(label, index, labels) {
+                                       if (Math.floor(label) === label) {
+                                           return label;
+                                       }
+                                   },
+                               }
+                           }],
+                       },
+                   }});
+                  // addData(myChart, data.labels, data.data);
                 },
                 error:function(error) {
                   console.log('Error: ', error);
@@ -218,7 +249,38 @@
                       `)
                   })
                   removeData(myChart);
-                  addData(myChart, data.labels, data.data);
+
+                  // myChart.data.datasets[0].data = data.data;
+                  // myChart.data.labels = data.labels;
+
+                  console.log('Labels ', data.labels, ' data ', data.data);
+                  myChart.destroy();
+                  myChart = new Chart(ctx, {
+                      type: 'bar',
+                      data: {
+                          labels: data.labels,
+                          datasets: [{
+                              label: 'Class Attendance By Date',
+                              data: data.data,
+                              borderWidth: 1,
+                              backgroundColor: 'rgba(253, 203, 110,1.0)',
+                          }]
+                      },
+                      options:{
+                       scales: {
+                           yAxes: [{
+                               ticks: {
+                                   beginAtZero: true,
+                                   userCallback: function(label, index, labels) {
+                                       if (Math.floor(label) === label) {
+                                           return label;
+                                       }
+                                   },
+                               }
+                           }],
+                       },
+                   }});
+                  // addData(myChart, data.labels, data.data);
                 },
                 error:function(error) {
                   console.log('Error: ', error);
@@ -265,6 +327,6 @@
 
         var course = $('#course').val();
         updateDates(course);
-    });
+    // });
   </script>
 {% endblock %}

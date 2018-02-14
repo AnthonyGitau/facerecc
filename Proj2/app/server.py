@@ -95,8 +95,8 @@ def add_student():
         student.first_name = first_name
         student.last_name = last_name
         db_session.commit()
-
-    new_student = Student(first_name=firstName, last_name=lastName, email=emailAddress)
+    pw_hash = bcrypt.hashpw(request.form['password'].encode(), bcrypt.gensalt())
+    new_student = Student(first_name=firstName, last_name=lastName, email=emailAddress, password=pw_hash)
     db_session.add(new_student)
     db_session.commit()
 
@@ -437,6 +437,21 @@ def get_attendance_dates(unit_id, date, end_date):
         'students_attendance': students_attendance,
     })
 
+
+@app.route('/view_your_attendance', methods=['GET', 'POST'])
+def view_your_attendance():
+    if request.method == 'GET':
+        return render_template('view_attendance.html');
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        student = Student.query.filter_by(email=email).first()
+        if student is None or not bcrypt.checkpw(password.encode(), student.password.encode()):
+            flash('Email or Password is invalid' , 'error')
+            return render_template('view_attendance.html')
+        units = Unit.query.all()
+        return render_template('view_attendance_data.html', student=student, units=units)
 
 if __name__ == '__main__':
     app.run(debug=True)
